@@ -5,8 +5,13 @@ import os
 # and add the `decky-loader/plugin/imports` path to `python.analysis.extraPaths` in `.vscode/settings.json`
 import decky
 import asyncio
+import pypresence
+import requests
 
 class Plugin:
+
+    # DEFAULT_CLIENT_ID = "1055680235682672682"
+
     # A normal method. It can be called from the TypeScript side using @decky/api.
     async def add(self, left: int, right: int) -> int:
         return left + right
@@ -15,6 +20,26 @@ class Plugin:
         await asyncio.sleep(15)
         # Passing through a bunch of random data, just as an example
         await decky.emit("timer_event", "Hello from the backend!", True, 2)
+
+
+
+    async def fetchDiscordIDs(self):
+        # tries = 5
+        # while tries > 0:
+        #     try:
+        #         r = requests.get("https://discordapp.com/api/v8/applications/detectable")
+        #         decky.logger.info("Fetched Discord game IDs!")
+        #         return r.json()
+        #     except Exception as e:
+        #         decky.logger.error("Could not fetch Discord game IDs")
+        #         await asyncio.sleep(2)
+        #         tries -= 1
+        # return None
+        pass
+
+    async def connectToDiscord(self):
+        pass
+    
 
     # Asyncio-compatible long-running code, executed in a task when the plugin is loaded
     async def _main(self):
