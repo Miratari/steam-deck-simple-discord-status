@@ -5,12 +5,18 @@ import os
 # and add the `decky-loader/plugin/imports` path to `python.analysis.extraPaths` in `.vscode/settings.json`
 import decky
 import asyncio
-import pypresence
+import nest_asyncio
+import pypresence as pp
 import requests
+import time
+
+nest_asyncio.apply()
+
 
 class Plugin:
 
-    # DEFAULT_CLIENT_ID = "1055680235682672682"
+    DEFAULT_CLIENT_ID = "1055680235682672682"
+    RPC = pp.Presence(DEFAULT_CLIENT_ID)
 
     # A normal method. It can be called from the TypeScript side using @decky/api.
     async def add(self, left: int, right: int) -> int:
@@ -22,23 +28,42 @@ class Plugin:
         await decky.emit("timer_event", "Hello from the backend!", True, 2)
 
 
+    async def fetch_discord_ids(self):
+        tries = 5
+        while tries > 0:
+            try:
+                r = requests.get("https://discordapp.com/api/v8/applications/detectable")
+                decky.logger.info("Fetched Discord game IDs!")
+                return "Fetched Discord game IDs!"
+                # return r.json()
+            except Exception as e:
+                decky.logger.error("Could not fetch Discord game IDs")
+                await asyncio.sleep(2)
+                tries -= 1
+        return "Could not fetch IDs"
 
-    async def fetchDiscordIDs(self):
-        # tries = 5
-        # while tries > 0:
-        #     try:
-        #         r = requests.get("https://discordapp.com/api/v8/applications/detectable")
-        #         decky.logger.info("Fetched Discord game IDs!")
-        #         return r.json()
-        #     except Exception as e:
-        #         decky.logger.error("Could not fetch Discord game IDs")
-        #         await asyncio.sleep(2)
-        #         tries -= 1
-        # return None
-        pass
+    async def connect_to_discord(self):
+        self.RPC = pp.Presence("359509387670192128") # Stardew game ID for testing
+        tries = 5
+        while tries > 0:
+            try:
+                self.RPC.connect() # 2. Start the handshake loop
+                return "Connected to Discord!"
+                # return RPC 
+            except Exception as e:
+                decky.logger.error("Could not find Discord app. Retrying...")
+                return "Error: " + str(e)
+                # await asyncio.sleep(2)
+                # tries -= 1
 
-    async def connectToDiscord(self):
-        pass
+        return "Discord not detected!"
+
+    async def update_presence(self):
+        try:
+            self.RPC.update(state = "not actually just testing code", start=time.time()//1) # 3. Updates our presence
+            return "Status set!"
+        except Exception as e:
+            return "Error: " + str(e)
     
 
     # Asyncio-compatible long-running code, executed in a task when the plugin is loaded

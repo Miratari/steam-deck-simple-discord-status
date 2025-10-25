@@ -28,12 +28,36 @@ const add = callable<[first: number, second: number], number>("add");
 // It starts a (python) timer which eventually emits the event 'timer_event'
 const startTimer = callable<[], void>("start_timer");
 
+const fetchDiscordIDs = callable<[], string>("fetch_discord_ids");
+
+const connectToDiscord = callable<[], string>("connect_to_discord");
+
+const updatePresence = callable<[], string>("update_presence");
+
 function Content() {
+
+  // add button
   const [result, setResult] = useState<number | undefined>();
 
   const onClick = async () => {
     const result = await add(Math.random(), Math.random());
     setResult(result);
+  };
+
+  // connect to discord app button
+  const [connectStatus, setConnectStatus] = useState<string | undefined>();
+
+  const connectApp = async () => {
+    const connectStatus = await connectToDiscord();
+    setConnectStatus(connectStatus);  
+  };
+
+  // update discord presence once created
+  const [presenceStatus, setPresenceStatus] = useState<string | undefined>();
+
+  const setPresence = async () => {
+    const presenceStatus = await updatePresence();
+    setPresenceStatus(presenceStatus);  
   };
 
   return (
@@ -52,6 +76,24 @@ function Content() {
           onClick={() => startTimer()}
         >
           {"Start Python timer"}
+        </ButtonItem>
+      </PanelSectionRow>
+
+      <PanelSectionRow>
+        <ButtonItem
+          layout="below"
+          onClick={connectApp}
+        >
+          {connectStatus ?? "Connect to Discord app"}
+        </ButtonItem>
+      </PanelSectionRow>
+
+      <PanelSectionRow>
+        <ButtonItem
+          layout="below"
+          onClick={setPresence}
+        >
+          {presenceStatus ?? "Set Discord presence"}
         </ButtonItem>
       </PanelSectionRow>
 

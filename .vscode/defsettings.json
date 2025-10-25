@@ -7,6 +7,7 @@
     "deckdir"   : "/home/deck",
     "pluginname": "Example Plugin",
     "python.analysis.extraPaths": [
-        "./py_modules"
+        "./py_modules",
+        "decky-loader/plugin/imports"
     ]
 }
